@@ -12,6 +12,47 @@
     какие-либо параметры, то они указываются непосредственно в самом URL (передается через аннотацию в метод) после
     знака ? только в формате ключ=значение и разделяются знаком &. Ими могут быть какие-либо фильтры, ключевые слова и
     прочее для уточнения запроса.
+    Обработка параметров запрос осуществляется в методе контроллера:
+     1) Добавлением в качестве аргумента HttpServletsRequest request:
+
+        @GetMapping("/hello")
+        public String helloPage(HttpServletsRequest request) {
+            String name = request.getParameter("name"); //"name" - ключ параметра
+            //Работа с пришешим от пользователя параметром
+            return "first/hello";
+        }
+        HttpServletsRequest request содержит все сведения о поступающем HTTP-запросе
+        В случае, если параметры не передаются, то присваивает им null
+
+     2) Добавлением в качестве аргумента аннотации @RequestParam:
+
+        @GetMapping("/hello")
+        public String helloPage(@RequestParam("name") String name) {
+            //Работа с пришешим от пользователя параметром
+            return "first/hello";
+        }
+        В случае, если параметры не передаются, то выдает ошибку 404, т.е. при использовании аннотации @RequestParam
+        в стандартном виде передавать параметры обязательно или же использовать запись вида:
+
+        @GetMapping("/hello")
+        public String helloPage(@RequestParam(value="name", required=false) String name) {
+            //Работа с пришешим от пользователя параметром
+            return "first/hello";
+        }
+    Для передачи параметров пользователя к модели необходимо добавить ее в аргументы к соответствующему методу контроллера
+
+        @GetMapping("/hello")
+        public String helloPage(@RequestParam(value="name", required=false) String name,
+                                Model model) {
+            //Работа с пришешим от пользователя параметром и передача МОДЕЛИ в ПРЕДСТАВЛЕНИЕ (VIEW)
+            //System.out.println("Hello, " + name + " " + surname);
+            model.addAttribute("key", "value")
+            //Например model.addAttribute("massage", Hello, " + name + " " + surname)
+            return "first/hello";
+        }
+    После чего в соответсвующем HTML обращаемся к переданному значению по ключу (в данном случае "message") через тег <p>:
+        <p th:text="${message}"></p> //где th:text - атрибут Thymeleaf, которой берет значение по ключу МОДЕЛИ и передает
+        его в ПРЕДСТАВЛЕНИЕ (VIEW) (воводит это значение с учетом переданных параметров (в примере текст "Hello name surname")
 
     POST - запрос для ДОБАВЛЕНИЯ/ИЗМЕНЕНИЯ чего-либо на сервере.
     Часто используется для отправки данных с веб-форм (создание новой учетной записи, репост новости, добавление записи
