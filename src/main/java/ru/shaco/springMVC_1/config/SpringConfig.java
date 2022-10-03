@@ -14,7 +14,7 @@ import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 
 @Configuration
 @ComponentScan("ru.shaco.springMVC_1")
-@EnableWebMvc
+@EnableWebMvc //АННОТАЦИЯ для включения Spring MVC и аннотаций @RequestMapping, @RestController и др.
 //КЛАСС замена applicationContextMVC.xml
 public class SpringConfig implements WebMvcConfigurer {
     private final ApplicationContext applicationContext;
